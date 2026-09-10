@@ -1,0 +1,633 @@
+/* ============================================
+   KEYFORGE - SISTEMA DE ANIMACIONES
+   ============================================ */
+
+/* Variables para ambos temas */
+:root {
+    --kf-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    --kf-gradient-soft: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%);
+    --kf-shadow-hover: 0 20px 40px rgba(99, 102, 241, 0.25);
+    --kf-transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --kf-transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --kf-transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   ANIMACIONES DE ENTRADA
+   ============================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============================================
+   CLASES DE ANIMACIÓN REUTILIZABLES
+   ============================================ */
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s var(--kf-transition-normal) forwards;
+    opacity: 0;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.4s var(--kf-transition-normal) forwards;
+    opacity: 0;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Delays escalonados para efectos en cascada */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+
+/* ============================================
+   BOTONES CON EFECTOS PREMIUM
+   ============================================ */
+.kf-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all var(--kf-transition-normal);
+    transform: translateY(0);
+}
+
+.kf-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--kf-shadow-hover);
+}
+
+.kf-btn:active {
+    transform: translateY(0);
+}
+
+/* Efecto ripple en botones */
+.kf-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.kf-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Botón gradiente animado */
+.kf-btn-gradient {
+    background: var(--kf-gradient);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    border: none;
+    color: white !important;
+}
+
+.kf-btn-gradient:hover {
+    background-size: 100% 100%;
+    filter: brightness(1.1);
+}
+
+/* Botón outline con efecto */
+.kf-btn-outline {
+    position: relative;
+    background: transparent;
+    border: 2px solid transparent;
+    background-image: linear-gradient(var(--mud-palette-surface), var(--mud-palette-surface)), var(--kf-gradient);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    transition: all var(--kf-transition-normal);
+}
+
+.kf-btn-outline:hover {
+    background-image: var(--kf-gradient), var(--kf-gradient);
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   CARDS CON EFECTOS INTERACTIVOS
+   ============================================ */
+.kf-card {
+    transition: all var(--kf-transition-normal);
+    overflow: hidden;
+    position: relative;
+}
+
+.kf-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--kf-shadow-hover);
+}
+
+/* Efecto de brillo en hover */
+.kf-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+    pointer-events: none;
+}
+
+.kf-card:hover::after {
+    transform: translateX(100%);
+}
+
+/* Imagen con zoom en hover */
+.kf-card-img {
+    transition: transform var(--kf-transition-slow);
+}
+
+.kf-card:hover .kf-card-img {
+    transform: scale(1.08);
+}
+
+/* ============================================
+   HERO SECTION CON FONDO ANIMADO
+   ============================================ */
+.kf-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--mud-palette-background);
+}
+
+.kf-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--kf-gradient-soft);
+    z-index: 0;
+}
+
+.kf-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Orbes flotantes decorativos */
+.kf-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.4;
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.kf-orb-1 {
+    width: 300px;
+    height: 300px;
+    background: var(--mud-palette-primary);
+    top: -100px;
+    right: -100px;
+    animation-delay: 0s;
+}
+
+.kf-orb-2 {
+    width: 200px;
+    height: 200px;
+    background: var(--mud-palette-secondary);
+    bottom: -50px;
+    left: -50px;
+    animation-delay: 2s;
+}
+
+.kf-orb-3 {
+    width: 150px;
+    height: 150px;
+    background: var(--mud-palette-tertiary);
+    top: 40%;
+    left: 50%;
+    animation-delay: 4s;
+}
+
+/* ============================================
+   TEXTO CON GRADIENTE
+   ============================================ */
+.kf-gradient-text {
+    background: var(--kf-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+}
+
+/* ============================================
+   BADGES Y CHIPS ANIMADOS
+   ============================================ */
+.kf-badge {
+    transition: all var(--kf-transition-fast);
+    cursor: pointer;
+}
+
+.kf-badge:hover {
+    transform: scale(1.08);
+}
+
+/* ============================================
+   INPUTS CON EFECTO FOCUS
+   ============================================ */
+.kf-input .mud-input-control {
+    transition: all var(--kf-transition-normal);
+}
+
+.kf-input .mud-input-control:hover {
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   SCROLLBAR PERSONALIZADO
+   ============================================ */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--mud-palette-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--mud-palette-primary);
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mud-palette-secondary);
+}
+
+/* ============================================
+   LOADING SKELETON
+   ============================================ */
+.kf-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--mud-palette-surface) 0%,
+        var(--mud-palette-background) 50%,
+        var(--mud-palette-surface) 100%
+    );
+    background-size: 2000px 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+/* ============================================
+   RESPONSIVE - Reducir animaciones en móvil
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .kf-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .kf-orb {
+        display: none;
+    }
+}
+
+/* Appbar con efecto glass */
+.kf-appbar {
+    backdrop-filter: blur(12px);
+    background-color: rgba(var(--mud-palette-appbar-background-rgb), 0.8) !important;
+    border-bottom: 1px solid var(--mud-palette-divider);
+    transition: all var(--kf-transition-normal);
+}
+
+/* Nav links con efecto underline */
+.kf-nav-link {
+    position: relative;
+    transition: color var(--kf-transition-fast);
+}
+
+.kf-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--kf-gradient);
+    transition: all var(--kf-transition-normal);
+    transform: translateX(-50%);
+}
+
+.kf-nav-link:hover::after,
+.kf-nav-link.mud-nav-link.active::after {
+    width: 80%;
+}
+
+/* Transición entre páginas */
+.kf-page-transition {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.kf-main {
+    min-height: calc(100vh - 64px);
+}
+
+/* Fix para el carousel */
+.testimonial-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 320px;
+    padding: 20px;
+}
+
+.mud-carousel {
+    overflow: visible;
+}
+
+.mud-carousel-delimiters {
+    margin-top: 16px;
+}
+
+/* Drawer Sidebar estilo Qwen */
+.kf-drawer {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--mud-palette-divider);
+    transition: width 0.3s ease;
+}
+
+.drawer-footer {
+    margin-top: auto;
+    border-top: 1px solid var(--mud-palette-divider);
+}
+
+.kf-main {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - 64px);
+    background: var(--mud-palette-background);
+}
+
+/* Cuando el drawer está abierto en desktop */
+@media (min-width: 960px) {
+    .kf-main {
+        margin-left: 280px;
+    }
+    
+    .kf-drawer:not(.mud-drawer-close) + .kf-main {
+        margin-left: 280px;
+    }
+}
+
+/* Nav links mejorados */
+.kf-nav-link {
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: all 0.2s;
+}
+
+.kf-nav-link:hover {
+    background: var(--mud-palette-action-default);
+}
+
+.kf-nav-link.mud-nav-link.active {
+    background: var(--mud-palette-primary);
+    color: white;
+}
+
+.mud-nav-menu .mud-nav-link {
+    gap: 12px;
+}
+
+/* ============================================
+   MODO CLARO PROFESIONAL - ESTILO WRAPPIXEL
+   ============================================ */
+
+/* Fondo general con patrón sutil */
+body {
+    background-color: var(--mud-palette-background);
+    background-image: radial-gradient(circle at 1px 1px, var(--mud-palette-divider) 1px, transparent 0);
+    background-size: 40px 40px;
+}
+
+/* Cards con sombras suaves */
+.mud-paper {
+    box-shadow: 0 0 12px rgba(145, 158, 171, 0.1) !important;
+    border: 1px solid var(--mud-palette-divider);
+    transition: all 0.3s ease;
+}
+
+.mud-paper:hover {
+    box-shadow: 0 8px 24px rgba(145, 158, 171, 0.16) !important;
+    transform: translateY(-2px);
+}
+
+/* AppBar con borde inferior */
+.kf-appbar {
+    border-bottom: 1px solid var(--mud-palette-divider);
+    background: rgba(34, 41, 235, 0.95) !important;
+    backdrop-filter: blur(10px);
+}
+
+/* Inputs con estilo profesional */
+.mud-input-outlined {
+    background: var(--mud-palette-surface);
+}
+
+.mud-input-outlined:hover:not(.mud-disabled) .mud-input-notched-outline {
+    border-color: var(--mud-palette-primary);
+}
+
+/* Botones mejorados */
+.mud-button-filled {
+    box-shadow: 0 4px 6px rgba(85, 108, 214, 0.2);
+    transition: all 0.3s ease;
+}
+
+.mud-button-filled:hover {
+    box-shadow: 0 6px 12px rgba(85, 108, 214, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Badges y chips */
+.mud-chip {
+    font-weight: 500;
+}
+
+/* Tablas profesionales */
+.mud-table {
+    background: var(--mud-palette-surface);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.mud-table-cell {
+    padding: 16px;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--mud-palette-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--mud-palette-text-secondary);
+    border-radius: 4px;
+    opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mud-palette-primary);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+    .kf-main {
+        margin-left: 0 !important;
+    }
+}
+/* ============================================
+   DRAWER MINI ESTILO QWEN / DASHBOARD
+   ============================================ */
+
+.kf-drawer {
+    border-right: 1px solid var(--mud-palette-divider);
+    /* MudBlazor maneja la transición de ancho internamente, no la sobrescribimos */
+}
+
+/* Evita que el texto o contenido se desborde horizontalmente al contraer */
+.kf-drawer .mud-drawer-content {
+    overflow-x: hidden;
+}
+
+.drawer-header {
+    transition: opacity 0.2s ease;
+}
+
+.drawer-footer {
+    margin-top: auto;
+    transition: opacity 0.2s ease;
+}
+
+.kf-main {
+    background: var(--mud-palette-background);
+    /* MudBlazor ajusta el padding/margin automáticamente según el estado del drawer */
+}
+
+/* Mejoras visuales para los NavLinks */
+.mud-nav-link {
+    border-radius: 8px;
+    margin: 4px 8px;
+    transition: all 0.2s ease;
+    justify-content: flex-start; /* Alineación base */
+}
+
+.mud-nav-link:hover {
+    background-color: rgba(99, 102, 241, 0.08);
+}
+
+.mud-nav-link.active {
+    background-color: var(--mud-palette-primary);
+    color: white !important;
+}
+
+.mud-nav-link.active .mud-icon {
+    color: white !important;
+}
+
+/* Centrar iconos cuando el drawer está en modo mini (MudBlazor lo hace, pero esto lo refuerza) */
+.mud-drawer-mini .mud-nav-link {
+    justify-content: center !important;
+    padding: 12px 0 !important;
+}
+
+.mud-drawer-mini .mud-nav-link .mud-badge {
+    display: none; /* Ocultar badges en modo mini para mantener la limpieza */
+}

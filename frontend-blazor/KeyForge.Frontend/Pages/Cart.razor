@@ -1,0 +1,80 @@
+@page "/cart"
+@using MudBlazor
+@using KeyForge.Frontend.Services
+@inject CartService CartService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudText Typo="Typo.h3" Class="mb-2 font-weight-bold">🛒 Mi Carrito</MudText>
+    <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Class="mb-6">
+        Revisa tus productos antes de finalizar la compra
+    </MudText>
+
+    @if (!CartService.Items.Any())
+    {
+        <MudPaper Elevation="2" Class="pa-8 text-center">
+            <MudIcon Icon="@Icons.Material.Rounded.ShoppingCart" Size="Size.Large" Color="Color.Secondary" Class="mb-4" />
+            <MudText Typo="Typo.h5" Class="mb-2">Tu carrito está vacío</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-4">Explora nuestro catálogo y encuentra tu teclado
+                ideal.</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/shop">
+                    Ir a la tienda
+                </MudButton>
+            </MudPaper>
+        }
+    else
+        {
+            <MudPaper Elevation="2" Class="pa-4">
+                @foreach (var item in CartService.Items)
+                {
+                    <MudGrid Class="pa-2" Style="border-bottom: 1px solid var(--mud-palette-divider);">
+                        <MudItem xs="3" sm="2">
+                            <MudImage Src="@item.Product.imagen" Class="rounded"
+                                      Style="width: 100%; height: auto; max-height: 80px; object-fit: cover;" />
+                        </MudItem>
+                        <MudItem xs="5" sm="6">
+                            <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@item.Product.nombre</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">@item.Product.categoria</MudText>
+                            <MudText Typo="Typo.body1" Color="Color.Primary">$@item.Product.precio</MudText>
+                        </MudItem>
+                        <MudItem xs="2" sm="2">
+                            <MudNumericField @bind-Value="item.Quantity" Min="0" Max="99" Variant="Variant.Outlined"
+                                             Size="Size.Small" Immediate="true"
+                                             OnChange="() => { CartService.UpdateQuantity(item.ProductId, item.Quantity); }" />
+                        </MudItem>
+                        <MudItem xs="2" sm="2" Class="text-right">
+                            <MudIconButton Icon="@Icons.Material.Rounded.Delete" Color="Color.Error" Size="Size.Small"
+                                           OnClick="@(() => { CartService.RemoveItem(item.ProductId); Snackbar.Add("Producto eliminado", Severity.Warning); })" />
+                        </MudItem>
+                    </MudGrid>
+                }
+            </MudPaper>
+
+            <!-- Total y Checkout -->
+            <MudPaper Elevation="2" Class="pa-4 mt-4">
+                <MudGrid>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.h6">Total de productos: <span
+                            class="font-weight-bold">@CartService.GetTotalItems()</span></MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" Class="text-right">
+                            <MudText Typo="Typo.h4" Class="kf-gradient-text font-weight-bold">
+                                $@CartService.GetTotalPrice().ToString("0.00")</MudText>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="mt-2 kf-btn-gradient"
+                                           EndIcon="@Icons.Material.Rounded.Payment" OnClick="FinalizarCompra">
+                                    Finalizar Compra
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                }
+            </MudContainer>
+
+@code {
+    private void FinalizarCompra()
+    {
+        Snackbar.Add("🎉 ¡Compra simulada con éxito! (No se cobró nada)", Severity.Success);
+        CartService.ClearCart();
+    }
+}

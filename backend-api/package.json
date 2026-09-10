@@ -1,0 +1,21 @@
+{
+  "name": "keyforge-backend",
+  "version": "1.0.0",
+  "description": "Backend API para KeyForge Ecommerce",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "api",
+    "keyboards"
+  ],
+  "author": "Jorge",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

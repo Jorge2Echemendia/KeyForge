@@ -1,0 +1,144 @@
+@page "/contact"
+@using MudBlazor
+@using KeyForge.Frontend.Model
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8 mb-8">
+    <MudText Typo="Typo.h3" Class="mb-2 text-center font-weight-bold">Contáctanos</MudText>
+    <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Class="mb-8 text-center">
+        ¿Tienes preguntas? Estamos aquí para ayudarte a construir tu setup ideal.
+    </MudText>
+
+    <MudGrid>
+        <MudItem xs="12" md="4">
+            <MudPaper Elevation="2" Class="pa-6"
+                      Style="height: 100%; border: 1px solid var(--mud-palette-divider); background: linear-gradient(180deg, var(--mud-palette-surface) 0%, var(--mud-palette-background) 100%);">
+                <MudText Typo="Typo.h5" Class="mb-4 font-weight-bold">Información</MudText>
+
+                <MudList T="string" Dense="true">
+                    <MudListItem Icon="@Icons.Material.Rounded.LocationOn" IconColor="Color.Primary">
+                        <MudText Typo="Typo.body1" Class="font-weight-bold">📍 Dirección</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Av. Tecnología 1234, Piso 5<br />Ciudad de
+                            México, CP 01000</MudText>
+                        </MudListItem>
+
+                        <MudListItem Icon="@Icons.Material.Rounded.Phone" IconColor="Color.Primary">
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">📞 Teléfono</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">+52 (55) 1234-5678<br />Lun-Vie: 9am - 6pm
+                            </MudText>
+                        </MudListItem>
+
+                        <MudListItem Icon="@Icons.Material.Rounded.Email" IconColor="Color.Primary">
+                            <MudText Typo="Typo.body1" Class="font-weight-bold">✉️ Email</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">hola@keyforge.mx<br />soporte@keyforge.mx
+                            </MudText>
+                        </MudListItem>
+                    </MudList>
+
+                    <MudDivider Class="my-4" />
+
+                    <MudText Typo="Typo.h6" Class="mb-3 font-weight-bold">Síguenos</MudText>
+                    <MudStack Row="true" Spacing="2">
+                        <MudIconButton Icon="@Icons.Custom.Brands.Facebook" Color="Color.Primary" Size="Size.Medium"
+                                       Href="https://facebook.com" Target="_blank" />
+                        <MudIconButton Icon="@Icons.Custom.Brands.Twitter" Color="Color.Info" Size="Size.Medium"
+                                       Href="https://twitter.com" Target="_blank" />
+                        <MudIconButton Icon="@Icons.Custom.Brands.Instagram" Color="Color.Secondary" Size="Size.Medium"
+                                       Href="https://instagram.com" Target="_blank" />
+                        <MudIconButton Icon="@Icons.Custom.Brands.YouTube" Color="Color.Error" Size="Size.Medium"
+                                       Href="https://youtube.com" Target="_blank" />
+                        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Tertiary" Size="Size.Medium"
+                                       Href="https://github.com" Target="_blank" />
+                    </MudStack>
+                </MudPaper>
+
+                <!-- Mapa Simulado -->
+                <MudPaper Elevation="2" Class="mt-4 overflow-hidden" Style="border: 1px solid var(--mud-palette-divider);">
+                    <MudImage Src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600"
+                              Style="width: 100%; height: 200px; object-fit: cover; opacity: 0.8;" />
+                </MudPaper>
+            </MudItem>
+
+            <!-- Formulario -->
+            <MudItem xs="12" md="8">
+                <MudPaper Elevation="2" Class="pa-6" Style="border: 1px solid var(--mud-palette-divider);">
+                    <MudText Typo="Typo.h5" Class="mb-4 font-weight-bold">Envíanos un Mensaje</MudText>
+
+                    <MudForm @ref="form" @bind-IsValid="formIsValid" Validation="@(new ContactFormValidator())">
+                        <MudGrid>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="model.Nombre" Label="Nombre completo *"
+                                              Variant="Variant.Outlined" For="@(() => model.Nombre)" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="model.Email" Label="Correo electrónico *"
+                                              Variant="Variant.Outlined" For="@(() => model.Email)" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="model.Telefono" Label="Teléfono (Opcional)"
+                                              Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudSelect T="string" @bind-Value="model.Asunto" Label="Asunto *" Variant="Variant.Outlined"
+                                           For="@(() => model.Asunto)">
+                                    <MudSelectItem Value="@("")">Selecciona un asunto</MudSelectItem>
+                                    <MudSelectItem Value="@("ventas")">Ventas y Productos</MudSelectItem>
+                                    <MudSelectItem Value="@("soporte")">Soporte Técnico</MudSelectItem>
+                                    <MudSelectItem Value="@("garantia")">Garantía</MudSelectItem>
+                                    <MudSelectItem Value="@("personalizado")">Pedidos Personalizados</MudSelectItem>
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="model.Mensaje" Label="Mensaje *" Variant="Variant.Outlined"
+                                              Lines="5" For="@(() => model.Mensaje)" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudCheckBox @bind-Value="model.AceptaTerminos" Color="Color.Primary"
+                                             For="@(() => model.AceptaTerminos)">
+                                    <MudText Typo="Typo.body2">
+                                        Acepto la <MudLink Href="#" Underline="Underline.None" Color="Color.Primary">
+                                        política de privacidad</MudLink> y el tratamiento de mis datos *
+                                    </MudText>
+                                </MudCheckBox>
+                            </MudItem>
+                            <MudItem xs="12" Class="text-right mt-4">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                                           EndIcon="@Icons.Material.Rounded.Send" OnClick="EnviarFormulario"
+                                           Disabled="@(!formIsValid)">
+                                    Enviar Mensaje
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudPaper>
+
+                <!-- FAQ (igual que antes) -->
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+
+@code {
+    private MudForm form;
+    private bool formIsValid;
+    private ContactFormModel model = new();
+
+    private async Task EnviarFormulario()
+    {
+        if (formIsValid)
+        {
+            // Simular envío a la API
+            await Task.Delay(800);
+            Snackbar.Add("✅ Mensaje enviado correctamente. Te contactaremos pronto.", Severity.Success);
+
+            // Resetear formulario
+            model = new ContactFormModel();
+            await form.ResetValidationAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add("❌ Por favor completa todos los campos requeridos", Severity.Error);
+            await form.Validate();
+        }
+    }
+}

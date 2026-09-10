@@ -1,0 +1,143 @@
+﻿@page "/shop"
+@using MudBlazor
+@using KeyForge.Frontend.Model
+@using KeyForge.Frontend.Services
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject ProductService ProductService
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    <!-- Header -->
+    <MudText Typo="Typo.h3" Class="mb-2">Catálogo de Teclados</MudText>
+    <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Class="mb-6">
+        Encuentra el teclado perfecto para tu setup
+    </MudText>
+
+    <MudGrid>
+        <!-- Sidebar de Filtros -->
+        <MudItem xs="12" md="3">
+            <MudPaper Elevation="2" Class="pa-4">
+                <MudText Typo="Typo.h6" Class="mb-4">Filtros</MudText>
+
+                <!-- Búsqueda -->
+                <MudTextField Value="searchTerm" Label="Buscar..." Variant="Variant.Outlined"
+                              Margin="Margin.Dense" FullWidth="true" ValueChanged="@((string newValue) => { searchTerm = newValue; FiltrarProductos(); })"/>
+
+                <MudDivider Class="my-4" />
+
+                <!-- Categoría -->
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Categoría</MudText>
+                @foreach (CategoriaFiltro cat in categorias)
+                {
+                    <MudCheckBox Value="cat.Selected" Color="Color.Primary" ValueChanged="@((bool newVal) => { cat.Selected = newVal; FiltrarProductos(); })" >@cat.Name
+                    </MudCheckBox>
+                }
+
+                <MudDivider Class="my-4" />
+
+                <!-- Rango de Precio -->
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Precio Máximo: $@precioMax</MudText>
+                <MudSlider @bind-Value="precioMax" Min="50" Max="300" Step="10" Color="Color.Primary"
+                           @onchange="FiltrarProductos">Value: @precioMax.ToString()</MudSlider>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Grid de Productos -->
+        <MudItem xs="12" md="9">
+            <MudGrid>
+                @if (productosFiltrados == null || !productosFiltrados.Any())
+                {
+                    <MudItem xs="12">
+                        <MudAlert Severity="Severity.Info">
+                            No se encontraron productos con los filtros seleccionados.
+                        </MudAlert>
+                    </MudItem>
+                }
+                else
+                {
+                    int index = 0;
+                    @foreach (var prod in productosFiltrados)
+                    {
+                        <MudItem xs="12" sm="6" lg="4" Class="@($"animate-fade-in-up delay-{index + 1}")">
+                            <MudPaper Elevation="0" Outlined="true" Class="kf-card d-flex flex-column" Style="height: 100%;">
+                                <div style="overflow: hidden; height: 220px; position: relative;">
+                                    <MudImage Src="@prod.imagen" Class="kf-card-img" ObjectFit="ObjectFit.Cover"
+                                              Height="220" />
+                                    <MudChip T="string" Color="Color.Primary"
+                                             Style="position: absolute; top: 12px; left: 12px; backdrop-filter: blur(8px);">
+                                        @prod.categoria
+                                    </MudChip>
+                                </div>
+                                <div class="pa-5 d-flex flex-column" style="flex-grow: 1;">
+                                    <MudText Typo="Typo.h6" Class="mb-2 font-weight-bold">@prod.nombre</MudText>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-3" Style="flex-grow: 1;">
+                                        @prod.descripcion
+                                    </MudText>
+                                    <MudDivider Class="mb-3" />
+                                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                        <MudText Typo="Typo.h5" Class="kf-gradient-text font-weight-bold">$@prod.precio
+                                        </MudText>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="kf-btn"
+                                                   StartIcon="@Icons.Material.Rounded.Visibility" OnClick="() => VerDetalle(prod.id)">
+                                            Ver Detalles
+                                        </MudButton>
+                                    </MudStack>
+                                </div>
+                            </MudPaper>
+                        </MudItem>
+                        index++;
+                    }
+                }
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private List<Producto> productos = new();
+    private List<Producto> productosFiltrados = new();
+    private string searchTerm = "";
+    private decimal precioMax = 300;
+
+    private List<CategoriaFiltro> categorias = new()
+    {
+        new CategoriaFiltro { Name = "Gaming", Selected = true },
+        new CategoriaFiltro { Name = "Productividad", Selected = true },
+        new CategoriaFiltro { Name = "Compacto", Selected = true },
+        new CategoriaFiltro { Name = "Ergonómico", Selected = true }
+    };
+
+    private class CategoriaFiltro
+    {
+        public string? Name { get; set; }
+        public bool Selected { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await ProductService.GetProductosAsync() ?? new();
+        productosFiltrados = productos;
+    }
+
+    private void FiltrarProductos()
+    {
+        var categoriasSeleccionadas = categorias.Where(c => c.Selected).Select(c => c.Name).ToList();
+
+        productosFiltrados = productos.Where(p =>
+                    (string.IsNullOrEmpty(searchTerm) ||
+                     p.nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                     p.descripcion.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) &&
+                    categoriasSeleccionadas.Contains(p.categoria) &&
+                    p.precio <= precioMax
+                ).ToList();
+
+        StateHasChanged();
+    }
+
+    private void VerDetalle(int id)
+    {
+        NavigationManager.NavigateTo($"/product/{id}");
+    }
+
+    [Inject] private NavigationManager NavigationManager { get; set; }
+}

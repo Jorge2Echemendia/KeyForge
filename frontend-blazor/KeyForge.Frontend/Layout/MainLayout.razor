@@ -1,0 +1,105 @@
+﻿@inherits LayoutComponentBase
+@using KeyForge.Frontend.Components
+@using MudBlazor
+
+@inject NavigationManager Navigation
+
+<MudThemeProvider @bind-IsDarkMode="_isDarkMode" Theme="_customTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <!-- AppBar -->
+    <MudAppBar Elevation="0" Dense="false" Class="kf-appbar">
+        <MudIconButton Icon="@Icons.Material.Rounded.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                       OnClick="ToggleDrawer" />
+
+        <MudText Typo="Typo.h6" Class="d-flex align-center font-weight-bold ml-2">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Large" Class="kf-gradient-text"
+                       StartIcon="@Icons.Material.Rounded.Keyboard" OnClick="@(()=> Navigation.NavigateTo("/"))">
+                KeyForge
+            </MudButton>
+        </MudText>
+
+        <MudSpacer />
+
+        <MudHidden SmDown="true">
+            <MudNavMenu Class="d-flex flex-row">
+                <MudNavLink Href="/" Match="NavLinkMatch.All" Class="kf-nav-link">Inicio</MudNavLink>
+                <MudNavLink Href="/shop" Class="kf-nav-link">Tienda</MudNavLink>
+                <MudNavLink Href="/reviews" Class="kf-nav-link">Reseñas</MudNavLink>
+                <MudNavLink Href="/contact" Class="kf-nav-link">Contacto</MudNavLink>
+            </MudNavMenu>
+        </MudHidden>
+
+        <MudSpacer />
+
+        <CartBadge />
+
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Rounded.LightMode : Icons.Material.Rounded.DarkMode)"
+                       Color="Color.Inherit" OnClick="ToggleTheme" Title="Cambiar tema" />
+    </MudAppBar>
+
+
+    <MudDrawer @bind-Open="_drawerOpen" OpenMiniOnHover="_drawerOpen" Breakpoint="Breakpoint.Always"
+               Variant="DrawerVariant.Mini" Class="kf-drawer" Fixed="true">
+        <NavMenu IsExpanded="_drawerOpen" />
+    </MudDrawer>
+
+    <!-- Contenido Principal -->
+    <MudMainContent Class="kf-main">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _isDarkMode = true;
+    private bool _drawerOpen = true;
+    private bool _isMobile = false;
+
+    private MudTheme _customTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#6366f1",
+            Secondary = "#8b5cf6",
+            Tertiary = "#ec4899",
+            AppbarBackground = "#f1f5f9",
+            Background = "#f1f5f9",
+            Surface = "#f1f5f9",
+            DrawerBackground = "#cbd5e1",
+            DrawerText = "#334155",
+            TextPrimary = "#0f172a",
+            TextSecondary = "#64748b"
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#818cf8",
+            Secondary = "#a78bfa",
+            Tertiary = "#f472b6",
+            AppbarBackground = "#0f172a",
+            Background = "#020617",
+            Surface = "#1e293b",
+            DrawerBackground = "#0f172a",
+            DrawerText = "#cbd5e1",
+            TextPrimary = "#f1f5f9",
+            TextSecondary = "#94a3b8"
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Detectar si es móvil
+        _isMobile = false; // Esto se puede mejorar con JavaScript interop
+    }
+
+    private void ToggleTheme() => _isDarkMode = !_isDarkMode;
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+        Console.WriteLine($"[DEBUG] Drawer expandido: {_drawerOpen}"); // Verifica en la consola del navegador (F12)
+        StateHasChanged(); // Fuerza a Blazor a repintar el componente inmediatamente
+    }
+}

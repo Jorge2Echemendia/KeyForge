@@ -1,0 +1,26 @@
+@using MudBlazor
+@using KeyForge.Frontend.Services
+@inject CartService CartService
+
+@namespace KeyForge.Frontend.Components
+
+<MudIconButton Icon="@Icons.Material.Rounded.ShoppingCart" Color="Color.Inherit" Badge="true"
+                       BadgeColor="Color.Tertiary" BadgeContent="3" Href="/cart">
+    @if (CartService.GetTotalItems() > 0)
+    {
+        <MudBadge Content="@CartService.GetTotalItems().ToString()" Color="Color.Error" Overlap="true" Dot="false" />
+    }
+</MudIconButton>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Suscribirse al cambio para actualizar el badge
+        CartService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        CartService.OnChange -= StateHasChanged;
+    }
+}

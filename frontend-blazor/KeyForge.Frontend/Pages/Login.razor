@@ -1,0 +1,87 @@
+@page "/login"
+@using MudBlazor
+@using KeyForge.Frontend.Model
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16 mb-16">
+    <MudPaper Elevation="3" Class="pa-8 kf-card animate-fade-in-up">
+        <MudStack Row="true" Justify="Justify.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Rounded.Keyboard" Size="Size.Large" Color="Color.Primary" />
+        </MudStack>
+        <MudText Typo="Typo.h4" Class="text-center font-weight-bold mb-2">Bienvenido de vuelta</MudText>
+        <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="text-center mb-6">
+            Inicia sesión para continuar en KeyForge
+        </MudText>
+
+        <MudForm @ref="loginForm" @bind-IsValid="formIsValid" Validation="@(new LoginValidator())">
+            <MudTextField @bind-Value="model.Email" Label="Correo electrónico" Variant="Variant.Outlined"
+                          For="@(() => model.Email)" InputType="InputType.Email" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Rounded.Email" Class="mb-4" />
+
+            <MudTextField @bind-Value="model.Password" Label="Contraseña" Variant="Variant.Outlined"
+                          For="@(() => model.Password)" InputType="InputType.Password" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Rounded.Lock" Class="mb-2" />
+
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-6">
+                <MudCheckBox @bind-Value="model.RememberMe" Color="Color.Primary">Recordarme</MudCheckBox>
+                <MudLink Href="#" Underline="Underline.Always" Color="Color.Primary">¿Olvidaste tu contraseña?</MudLink>
+            </MudStack>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true"
+                       Class="kf-btn kf-btn-gradient mb-4" OnClick="HandleLogin" Disabled="@(!formIsValid)">
+                Iniciar Sesión
+            </MudButton>
+
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                ¿No tienes cuenta? <MudLink Href="/register" Underline="Underline.Always" Color="Color.Primary">
+                Regístrate aquí</MudLink>
+            </MudText>
+        </MudForm>
+
+        <!-- Separador con "O" -->
+        <MudDivider Class="my-6" Text="O continúa con" />
+        <MudGrid Justify="Justify.Center" Spacing="2">
+            <MudItem>
+                <MudIconButton Icon="@Icons.Custom.Brands.Facebook" Style="background: #1877f2; color: white;"
+                               Size="Size.Medium" />
+            </MudItem>
+            <MudItem>
+                <MudIconButton Icon="@Icons.Custom.Brands.Twitter" Style="background: #000000; color: white;"
+                               Size="Size.Medium" />
+            </MudItem>
+            <MudItem>
+                <MudIconButton Icon="@Icons.Custom.Brands.Instagram" Style="background: #e4405f; color: white;"
+                               Size="Size.Medium" />
+            </MudItem>
+            <MudItem>
+                <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Style="background: #0a66c2; color: white;"
+                               Size="Size.Medium" />
+            </MudItem>
+            <MudItem>
+                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="background: #181717; color: white;"
+                               Size="Size.Medium" />
+            </MudItem>
+
+        </MudGrid>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm loginForm;
+    private bool formIsValid;
+    private LoginModel model = new();
+
+    private async Task HandleLogin()
+    {
+        if (!formIsValid) return;
+
+        // Simular autenticación
+        await Task.Delay(800);
+
+        // Simular éxito (siempre)
+        Snackbar.Add("✅ Inicio de sesión exitoso. ¡Bienvenido!", Severity.Success);
+        Navigation.NavigateTo("/");
+    }
+
+}

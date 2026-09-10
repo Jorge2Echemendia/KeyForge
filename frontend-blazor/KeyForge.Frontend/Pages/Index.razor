@@ -1,0 +1,241 @@
+﻿@page "/"
+
+@using MudBlazor
+@using KeyForge.Frontend.Model
+@using KeyForge.Frontend.Services
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject CartService CartService
+@inject ISnackbar Snackbar
+@inject ProductService ProductService
+
+<!-- HERO SECTION -->
+<section class="kf-hero pa-16 pa-md-8" style="min-height: 600px;">
+    <div class="kf-orb kf-orb-1"></div>
+    <div class="kf-orb kf-orb-2"></div>
+    <div class="kf-orb kf-orb-3"></div>
+
+    <MudContainer MaxWidth="MaxWidth.Large" Class="kf-hero-content text-center">
+        <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small"
+                 Class="animate-fade-in-up mb-4">
+            <MudIcon Icon="@Icons.Material.Rounded.Bolt" Size="Size.Small" Class="mr-1" />
+            Nueva Colección 2026
+        </MudChip>
+
+        <MudText Typo="Typo.h2" Class="mb-4 animate-fade-in-up delay-1 font-weight-bold" Style="line-height: 1.2;">
+            Teclados que <span class="kf-gradient-text">inspiran</span><br />
+            código que <span class="kf-gradient-text">transforma</span>
+        </MudText>
+
+        <MudText Typo="Typo.h6" Color="Color.Secondary" Class="mb-8 animate-fade-in-up delay-2"
+                 Style="max-width: 600px; margin: 0 auto;">
+            Diseñados para desarrolladores, gamers y creadores que exigen lo mejor.
+            Construcción premium, personalización infinita.
+        </MudText>
+
+        <MudGrid justify="Justify.Center" Class="animate-fade-in-up delay-3">
+            <MudItem>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                           Class="kf-btn kf-btn-gradient px-8" EndIcon="@Icons.Material.Rounded.ArrowForward"
+                           OnClick="@(()=> Navigation.NavigateTo("/shop"))">
+                    Explorar Catálogo
+                </MudButton>
+            </MudItem>
+            <MudItem>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Large" Class="kf-btn px-8"
+                           EndIcon="@Icons.Material.Rounded.PlayCircle">
+                    Ver Demo
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Stats animados -->
+        <MudGrid Class="mt-16 animate-fade-in-up delay-4">
+            <MudItem xs="4">
+                <MudText Typo="Typo.h3" Class="kf-gradient-text font-weight-bold">50K+</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Clientes felices</MudText>
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Typo="Typo.h3" Class="kf-gradient-text font-weight-bold">4.9★</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Valoración media</MudText>
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Typo="Typo.h3" Class="kf-gradient-text font-weight-bold">2 años</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">De garantía</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</section>
+
+@if (loading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="mx-auto" />
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <MudAlert Severity="Severity.Error">@errorMessage</MudAlert>
+}
+else
+{
+
+    <!-- PRODUCTOS DESTACADOS -->
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 mb-16">
+        <MudText Typo="Typo.h4" Class="mb-2 text-center font-weight-bold">
+            Productos <span class="kf-gradient-text">Destacados</span>
+        </MudText>
+        <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Class="mb-8 text-center">
+            Los favoritos de nuestra comunidad
+        </MudText>
+
+        @if (productos == null)
+        {
+            <MudGrid>
+                @for (int i = 0; i < 3; i++)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudPaper Class="pa-4 kf-skeleton" Style="height: 400px;" />
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+        else
+        {
+            <MudGrid>
+                @foreach (var (prod, index) in productos.Select((p, i) => (p, i)))
+                {
+                    <MudItem xs="12" sm="6" lg="4" Class="@($"animate-fade-in-up delay-{index + 1}")">
+                        <MudPaper Class="kf-card" Elevation="0" Outlined="true">
+                            <div style="overflow: hidden; height: 240px;">
+                                <MudImage Src="@prod.imagen" Class="kf-card-img" ObjectFit="ObjectFit.Cover" Height="240" />
+                            </div>
+                            <div class="pa-5">
+                                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-2">
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                                        @prod.categoria
+                                    </MudChip>
+                                    <MudRating Items="5" Value="4.5" ReadOnly="true" Size="Size.Small" />
+                                </MudStack>
+
+                                <MudText Typo="Typo.h6" Class="mb-2 font-weight-bold">@prod.nombre</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
+                                    @prod.descripcion
+                                </MudText>
+
+                                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.h5" Class="kf-gradient-text font-weight-bold">
+                                        $@prod.precio
+                                    </MudText>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="kf-btn"
+                                               StartIcon="@Icons.Material.Rounded.ShoppingCart" OnClick="@(() => AgregarAlCarrito(prod))">
+                                        Agregar
+                                    </MudButton>
+                                </MudStack>
+                            </div>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </MudContainer>
+}
+<!-- FEATURES SECTION -->
+<section style="background: var(--mud-palette-surface); padding: 80px 0;">
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudText Typo="Typo.h4" Class="mb-8 text-center font-weight-bold">
+            ¿Por qué <span class="kf-gradient-text">KeyForge</span>?
+        </MudText>
+
+        <MudGrid>
+            @foreach (var (feature, index) in features.Select((f, i) => (f, i)))
+            {
+                <MudItem xs="12" sm="6" lg="4" Class="@($"animate-fade-in-up delay-{index + 1}")">
+                    <MudPaper Class="pa-6 text-center kf-card" Elevation="0" Outlined="true" Style="height: 100%;">
+                        <MudAvatar Color="Color.Primary" Size="Size.Large" Class="mx-auto mb-4"
+                                   Style="background: var(--kf-gradient);">
+                            <MudIcon Icon="@feature.Icon" />
+                        </MudAvatar>
+                        <MudText Typo="Typo.h6" Class="mb-2 font-weight-bold">@feature.Title</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">@feature.Description</MudText>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudContainer>
+</section>
+
+<!-- CTA FINAL -->
+<section class="kf-hero pa-16 text-center" style="margin-top: 80px;">
+    <div class="kf-orb kf-orb-1"></div>
+    <div class="kf-orb kf-orb-2"></div>
+    <MudContainer MaxWidth="MaxWidth.Small" Class="kf-hero-content">
+        <MudText Typo="Typo.h3" Class="mb-4 font-weight-bold">
+            ¿Listo para <span class="kf-gradient-text">mejorar tu setup</span>?
+        </MudText>
+        <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-6">
+            Únete a miles de profesionales que ya confían en KeyForge
+        </MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="kf-btn kf-btn-gradient px-8"
+                   EndIcon="@Icons.Material.Rounded.ArrowForward" OnClick="@(()=> Navigation.NavigateTo("/shop"))">
+            Comprar Ahora
+        </MudButton>
+    </MudContainer>
+</section>
+
+@code {
+    private bool loading = true;
+    private string errorMessage = "";
+
+    private class Feature
+    {
+        public string? Icon { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+    }
+
+    
+     private List<Producto> productos = new();
+    private List<Feature> features = new()
+    {
+        new Feature {
+            Icon = Icons.Material.Rounded.Build,
+            Title = "Construcción Premium",
+            Description = "Chasis de aluminio CNC y keycaps PBT double-shot que duran toda la vida."
+        },
+        new Feature {
+            Icon = Icons.Material.Rounded.Palette,
+            Title = "Personalización Total",
+            Description = "Elige switches, colores, layout y grabado láser. Tu teclado, tus reglas."
+        },
+        new Feature {
+            Icon = Icons.Material.Rounded.Speed,
+            Title = "Rendimiento Pro",
+            Description = "Polling rate de 8000Hz y anti-ghosting N-Key para cada pulsación."
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            productos = await ProductService.GetProductosAsync() ?? new();
+            productos = productos?.Take(3).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "No pudimos cargar los productos. Intenta de nuevo más tarde.";
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void AgregarAlCarrito(Producto prod)
+    {
+        CartService.AddItem(prod, 1); // Agregar 1 unidad
+        Snackbar.Add($"✅ {prod.nombre} agregado al carrito", Severity.Success);
+    }
+
+    
+}

@@ -1,0 +1,203 @@
+﻿@page "/product/{id:int}"
+
+@using MudBlazor
+@using KeyForge.Frontend.Model
+@using KeyForge.Frontend.Services
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject CartService CartService
+@inject ProductService ProductService
+
+@if (producto == null)
+{
+    <MudContainer Class="mt-10 text-center">
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+    </MudContainer>
+}
+else
+{
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+        <MudButton Href="/shop" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack">
+            Volver al catálogo
+        </MudButton>
+
+        <MudGrid Class="mt-4">
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-2">
+                    <MudImage Src="@imagenPrincipal" Class="rounded-lg" Style="width: 100%; height: auto;" Elevation="0" />
+                    <!-- Miniaturas -->
+                    <MudGrid Class="mt-2">
+                        @foreach (var img in imagenesProducto)
+                        {
+                            <MudItem xs="3">
+                                <MudImage Src="@img" Class="rounded cursor-pointer"
+                                          Style="width: 100%; height: 80px; object-fit: cover;" OnClick="() => CambiarImagen(img)" />
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6">
+                    <MudChip T="string" Color="Color.Primary" Class="mb-2">@producto.categoria</MudChip>
+                    <MudText Typo="Typo.h4" Class="mb-2">@producto.nombre</MudText>
+                    <MudRating Items="5" Value="4.5" ReadOnly="true" Class="mb-4" />
+                    <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">$@producto.precio USD</MudText>
+                    <MudText Typo="Typo.body1" Class="mb-6">@producto.descripcion</MudText>
+
+                    <MudDivider Class="my-4" />
+
+                    <MudText Typo="Typo.subtitle1" Class="mb-2">Tipo de Switch</MudText>
+                    <MudRadioGroup @bind-Value="switchSeleccionado" Orientation="Orientation.Horizontal" Class="mb-4">
+                        @foreach (var sw in switchesDisponibles)
+                        {
+                            <MudRadio Value="@sw" Color="Color.Primary">@sw</MudRadio>
+                        }
+                    </MudRadioGroup>
+
+                    <MudText Typo="Typo.subtitle1" Class="mb-2">Color del Teclado</MudText>
+                    <MudRadioGroup @bind-Value="colorSeleccionado" Orientation="Orientation.Horizontal" Class="mb-6">
+                        @foreach (var color in coloresDisponibles)
+                        {
+                            <MudRadio Value="@color.Key" Color="Color.Primary">
+                                <MudAvatar Size="Size.Small"
+                                           Style="@($"background-color: {color.Value}; margin-right: 8px;")" />
+                                @color.Key
+                            </MudRadio>
+                        }
+                    </MudRadioGroup>
+
+                    <MudGrid>
+                        <MudItem xs="4">
+                            <MudNumericField @bind-Value="cantidad" Min="1" Max="10" Label="Cantidad"
+                                             Variant="Variant.Outlined" FullWidth="true" />
+                        </MudItem>
+                        <MudItem xs="8">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true"
+                                       StartIcon="@Icons.Material.Filled.ShoppingCart" OnClick="AgregarAlCarrito">
+                                Agregar al Carrito - $@(producto.precio * cantidad)
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Pestañas con detalles, especificaciones y reseñas -->
+        <MudPaper Elevation="2" Class="pa-6 mt-6">
+            <MudTabs Elevation="0" Class="mt-4">
+                <MudTabPanel Text="Características" Icon="@Icons.Material.Filled.Info">
+                    <MudList T="string" Dense="true">
+                        @foreach (var feature in producto.caracteristicas)
+                        {
+                            <MudListItem Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                                @feature
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudTabPanel>
+
+                <MudTabPanel Text="Especificaciones" Icon="@Icons.Material.Filled.Settings">
+                    <MudTable Items="@especificaciones" Hover="true" Striped="true" Bordered="true">
+                        <HeaderContent>
+                            <MudTh>Característica</MudTh>
+                            <MudTh>Detalle</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Característica">@context.Key</MudTd>
+                            <MudTd DataLabel="Detalle">@context.Value</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudTabPanel>
+
+                <MudTabPanel Text="Reseñas" Icon="@Icons.Material.Filled.Star">
+                    <MudText>Próximamente: reseñas de usuarios</MudText>
+                </MudTabPanel>
+            </MudTabs>
+        </MudPaper>
+    </MudContainer>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Producto producto;
+    private string switchSeleccionado = "Cherry MX Red";
+    private string colorSeleccionado = "Negro";
+    private int cantidad = 1;
+    private string imagenPrincipal;
+
+    private List<string> imagenesProducto = new()
+    {
+        "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=500",
+        "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=500",
+        "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=500",
+        "https://images.unsplash.com/photo-1527813131891-bfee046f4b02?auto=format&fit=crop&w=500"
+    };
+
+    private List<string> switchesDisponibles = new()
+    {
+        "Cherry MX Red",
+        "Cherry MX Blue",
+        "Cherry MX Brown",
+        "Gateron Yellow"
+    };
+
+    private Dictionary<string, string> coloresDisponibles = new()
+    {
+        { "Negro", "#212121" },
+        { "Blanco", "#FAFAFA" },
+        { "Gris Espacial", "#757575" },
+        { "Azul Navy", "#1A237E" }
+    };
+
+    private Dictionary<string, string> especificaciones = new()
+    {
+        { "Conectividad", "USB-C / Bluetooth 5.0" },
+        { "Batería", "4000mAh (hasta 200 horas)" },
+        { "Peso", "850g" },
+        { "Dimensiones", "360 x 135 x 35mm" },
+        { "Keycaps", "PBT Double-shot" },
+        { "RGB", "Por tecla, 16.8 millones de colores" },
+        { "Software", "KeyForge Configurator (Windows/Mac)" },
+        { "Garantía", "2 años" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        producto = await ProductService.GetProductoByIdAsync(Id);
+        if (producto != null)
+        {
+            CargarDetalles(producto);
+        }
+    }
+    private void CargarDetalles(Producto prod)
+    {
+        imagenPrincipal = producto.imagen;
+        // Agregar características si no existen
+        if (producto.caracteristicas == null)
+        {
+            producto.caracteristicas = new List<string>
+                {
+                    "Switches mecánicos premium",
+                    "Anti-ghosting completo",
+                    "Iluminación RGB personalizable",
+                    "Teclas programables",
+                    "Cable USB-C desmontable",
+                    "Incluye keycaps extra"
+                };
+        }
+    }
+    private void CambiarImagen(string nuevaImagen)
+    {
+        imagenPrincipal = nuevaImagen;
+    }
+
+    private void AgregarAlCarrito()
+    {
+        if (producto == null) return;
+
+        CartService.AddItem(producto, cantidad);
+        Snackbar.Add($"✅ {producto.nombre} x{cantidad} agregado al carrito", Severity.Success);
+    }
+}

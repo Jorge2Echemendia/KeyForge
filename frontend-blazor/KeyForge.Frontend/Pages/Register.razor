@@ -1,0 +1,94 @@
+@page "/register"
+@using MudBlazor
+@using KeyForge.Frontend.Model
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16 mb-16">
+    <MudPaper Elevation="3" Class="pa-8 kf-card animate-fade-in-up">
+        <MudStack Row="true" Justify="Justify.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Rounded.PersonAdd" Size="Size.Large" Color="Color.Primary" />
+        </MudStack>
+        <MudText Typo="Typo.h4" Class="text-center font-weight-bold mb-2">Crear cuenta</MudText>
+        <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="text-center mb-6">
+            Únete a la comunidad KeyForge
+        </MudText>
+
+        <MudForm @ref="registerForm" @bind-IsValid="formIsValid" Validation="@(new RegisterValidator())">
+            <MudTextField @bind-Value="model.Nombre" 
+                          Label="Nombre completo" 
+                          Variant="Variant.Outlined" 
+                          For="@(() => model.Nombre)"
+                          Adornment="Adornment.Start" 
+                          AdornmentIcon="@Icons.Material.Rounded.Person"
+                          Class="mb-4" />
+
+            <MudTextField @bind-Value="model.Email" 
+                          Label="Correo electrónico" 
+                          Variant="Variant.Outlined" 
+                          For="@(() => model.Email)"
+                          InputType="InputType.Email"
+                          Adornment="Adornment.Start" 
+                          AdornmentIcon="@Icons.Material.Rounded.Email"
+                          Class="mb-4" />
+
+            <MudTextField @bind-Value="model.Password" 
+                          Label="Contraseña" 
+                          Variant="Variant.Outlined" 
+                          For="@(() => model.Password)"
+                          InputType="InputType.Password"
+                          Adornment="Adornment.Start" 
+                          AdornmentIcon="@Icons.Material.Rounded.Lock"
+                          Class="mb-4" />
+
+            <MudTextField @bind-Value="model.ConfirmPassword" 
+                          Label="Confirmar contraseña" 
+                          Variant="Variant.Outlined" 
+                          For="@(() => model.ConfirmPassword)"
+                          InputType="InputType.Password"
+                          Adornment="Adornment.Start" 
+                          AdornmentIcon="@Icons.Material.Rounded.Lock"
+                          Class="mb-4" />
+
+            <MudCheckBox @bind-Value="model.AceptaTerminos" 
+                         Color="Color.Primary" 
+                         For="@(() => model.AceptaTerminos)"
+                         Class="mb-6">
+                Acepto los <MudLink Href="#" Underline="Underline.Always" Color="Color.Primary">términos y condiciones</MudLink>
+            </MudCheckBox>
+
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       Size="Size.Large" 
+                       FullWidth="true" 
+                       Class="kf-btn kf-btn-gradient mb-4"
+                       OnClick="HandleRegister"
+                       Disabled="@(!formIsValid)">
+                Registrarse
+            </MudButton>
+
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                ¿Ya tienes cuenta? <MudLink Href="/login" Underline="Underline.Always" Color="Color.Primary">Inicia sesión</MudLink>
+            </MudText>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm registerForm;
+    private bool formIsValid;
+    private RegisterModel model = new();
+
+    private async Task HandleRegister()
+    {
+        if (!formIsValid) return;
+
+        // Simular registro
+        await Task.Delay(800);
+        
+        Snackbar.Add("✅ Cuenta creada exitosamente. Ahora inicia sesión.", Severity.Success);
+        Navigation.NavigateTo("/login");
+    }
+
+
+}

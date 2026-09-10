@@ -1,0 +1,200 @@
+﻿@page "/reviews"
+@using MudBlazor
+@using KeyForge.Frontend.Model
+
+<!-- Fondo sutil para dar profundidad en modo claro -->
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8 mb-8">
+
+    <!-- Header con Estadísticas -->
+    <MudPaper Elevation="2" Class="pa-6 mb-6"
+              Style="background: var(--mud-palette-surface); border: 1px solid var(--mud-palette-divider);">
+        <MudGrid>
+            <MudItem xs="12" md="4" Class="text-center">
+                <MudText Typo="Typo.h2" Color="Color.Primary" Class="font-weight-bold">4.8</MudText>
+                <MudRating Items="5" Value="4.8" ReadOnly="true" Class="mb-2" />
+                <MudText Typo="Typo.subtitle1" Color="Color.Secondary">Basado en 342 reseñas verificadas</MudText>
+            </MudItem>
+            <MudItem xs="12" md="8">
+                <MudGrid>
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        <MudItem xs="12" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2" Class="mr-2" Style="width: 70px;">@i estrellas</MudText>
+                            <MudLinearProgress Value="@GetPorcentaje(i)" Color="Color.Primary" Class="mr-2"
+                                               Style="flex-grow: 1; height: 8px; border-radius: 4px;" />
+                            <MudText Typo="Typo.body2" Class="ml-2" Style="width: 40px;">@GetPorcentaje(i)%</MudText>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Filtros de Reseñas -->
+    <MudGrid Class="mb-6">
+        <MudItem xs="12" md="6">
+            <MudSelect @bind-Value="_ordenSeleccionado" 
+                       T="string" 
+                       Label="Ordenar por" 
+                       Variant="Variant.Outlined"
+                       FullWidth="true"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Style="z-index: 1000;">
+                @foreach (var opcion in _opcionesOrden)
+                {
+                    <MudSelectItem Value="@opcion">@opcion</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" md="6" Class="d-flex align-end justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Rounded.Add">
+                Escribir Reseña
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+
+    <!-- Lista de Reseñas -->
+    @foreach (var review in reseñas)
+    {
+        <MudPaper Elevation="2" Class="pa-6 mb-4"
+                  Style="border: 1px solid var(--mud-palette-divider); transition: transform 0.2s;"
+                  OnMouseEnter="() => HoverReview(review.id)" OnMouseLeave="() => LeaveReview(review.id)">
+            <MudGrid>
+                <MudItem xs="12" md="2" Class="text-center">
+                    <MudAvatar Src="@review.avatar" Size="Size.Large" Class="mx-auto mb-2"
+                               Style="border: 2px solid var(--mud-palette-primary);" />
+                    <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@review.nombre</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@review.fecha</MudText>
+                    @if (review.verified)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined" Class="mt-2">
+                            <MudIcon Icon="@Icons.Material.Rounded.Verified" Size="Size.Small" Class="mr-1" /> Verificado
+                        </MudChip>
+                    }
+                </MudItem>
+                <MudItem xs="12" md="10">
+                    <MudRating Items="5" Value="@review.rating" ReadOnly="true" Class="mb-2" />
+                    <MudText Typo="Typo.h6" Class="mb-2 font-weight-bold">@review.titulo</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary" Class="mb-3">@review.comentario</MudText>
+
+                    @if (!string.IsNullOrEmpty(review.producto))
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled" Class="mb-3">
+                            <MudIcon Icon="@Icons.Material.Rounded.Keyboard" Size="Size.Small" Class="mr-1" /> @review.producto
+                        </MudChip>
+                    }
+
+                    @if (review.imagenes.Any())
+                    {
+                        <MudGrid Class="mt-3">
+                            @foreach (var img in review.imagenes)
+                            {
+                                <MudItem xs="4" sm="3">
+                                    <MudImage Src="@img" Class="rounded-lg"
+                                              Style="width: 100%; height: 100px; object-fit: cover; border: 1px solid var(--mud-palette-divider);" />
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    }
+
+                    <MudDivider Class="my-4" />
+
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Size="Size.Small" Class="mr-1" />
+                                @review.utiles personas encontraron útil esta reseña
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6" Class="text-right">
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary">
+                                ¿Útil?
+                            </MudButton>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Secondary">
+                                Reportar
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    }
+
+    <MudContainer MaxWidth="MaxWidth.Large">
+    <MudCarousel TData="Testimonio" 
+                 Class="mb-6" 
+                 ShowDelimiters="true" 
+                 DelimitersColor="Color.Primary"
+                 EnableSwipe="true" 
+                 Cycle="true" 
+                 Interval="5000"
+                 Style="height: 300px;"> <!-- Altura fija para el carrusel -->
+        @foreach (var testimonio in testimonios)
+        {
+            <MudCarouselItem>
+                <div class="testimonial-wrapper" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                    <MudPaper Elevation="2" 
+                              Class="pa-8 text-center" 
+                              Style="border: 1px solid var(--mud-palette-divider); 
+                                     background: linear-gradient(135deg, var(--mud-palette-surface) 0%, var(--mud-palette-background) 100%);
+                                     max-width: 650px;
+                                     margin: 0 auto;
+                                     width: 100%;">
+                        <MudIcon Icon="@Icons.Material.Rounded.FormatQuote" 
+                                 Size="Size.Large" 
+                                 Color="Color.Primary"
+                                 Class="mb-4" 
+                                 Style="opacity: 0.5;" />
+                        <MudText Typo="Typo.h6" 
+                                 Class="mb-4" 
+                                 Style="font-style: italic; line-height: 1.6;">
+                            "@testimonio.texto"
+                        </MudText>
+                        <MudAvatar Src="@testimonio.avatar" Size="Size.Medium" Class="mx-auto mb-2" />
+                        <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@testimonio.nombre</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Primary">@testimonio.cargo</MudText>
+                    </MudPaper>
+                </div>
+            </MudCarouselItem>
+        }
+    </MudCarousel>
+</MudContainer>
+    </MudContainer>
+
+@code {
+    private string _ordenSeleccionado;
+
+    private List<Review> reseñas = new()
+    {
+        new Review { id = 1, nombre = "Carlos Mendoza", avatar = "https://i.pravatar.cc/150?img=11", fecha = "15 Ago 2024",
+rating = 5, verified = true, titulo = "¡El mejor teclado que he tenido!", comentario = "Llevo 3 meses con el KeyForge Alpha y es increíble. Los switches Cherry MX Red son súper suaves y el RGB es personalizable al 100%.", producto =
+"KeyForge Alpha", utiles = 45, imagenes = new List<string> {
+"https://images.unsplash.com/photo-1595225476474-87563907a212?w=200" } },
+        new Review { id = 2, nombre = "Ana Rodríguez", avatar = "https://i.pravatar.cc/150?img=5", fecha = "10 Ago 2024", rating
+= 5, verified = true, titulo = "Perfecto para programar", comentario = "Como desarrolladora, paso 8+ horas al día escribiendo código. Este teclado ergonómico me ha ayudado muchísimo con la fatiga.", producto = "KeyForge Ergo", utiles
+= 32, imagenes = new List<string>() },
+        new Review { id = 3, nombre = "Miguel Ángel Torres", avatar = "https://i.pravatar.cc/150?img=3", fecha = "5 Ago 2024",
+rating = 4, verified = false, titulo = "Excelente calidad, un poco caro", comentario = "La calidad de construcción es premium, se nota en cada detalle. Los keycaps PBT son geniales y no brillan con el uso.", producto = "KeyForge Pro",
+utiles = 28, imagenes = new List<string>() }
+    };
+
+    private List<Testimonio> testimonios = new()
+    {
+        new Testimonio { nombre = "Roberto Jiménez", cargo = "Streamer Profesional", avatar =
+"https://i.pravatar.cc/150?img=13", texto = "KeyForge cambió mi setup por completo. Mis viewers siempre preguntan por mi teclado. La calidad se nota en cada tecla." },
+        new Testimonio { nombre = "Patricia Morales", cargo = "Diseñadora UX", avatar = "https://i.pravatar.cc/150?img=10",
+texto = "Después de probar 5 teclados diferentes, me quedé con KeyForge. La ergonomía y la personalización son insuperables." }
+    };
+
+    private double GetPorcentaje(int estrellas)
+    {
+        var dict = new Dictionary<int, double> { { 5, 78 }, { 4, 15 }, { 3, 4 }, { 2, 2 }, { 1, 1 } };
+        return dict.TryGetValue(estrellas, out var valor) ? valor : 0;
+    }
+
+    private void HoverReview(int id) { /* Podrías agregar lógica de hover aquí si quisieras */ }
+    private void LeaveReview(int id) { }
+
+    private readonly string[] _opcionesOrden  ={
+"Más Recientes","Mejor Valoradas" ,"Peor Valoradas"};
+}
