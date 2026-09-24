@@ -5,7 +5,7 @@
 @namespace KeyForge.Frontend.Components
 
 <MudIconButton Icon="@Icons.Material.Rounded.ShoppingCart" Color="Color.Inherit" Badge="true"
-                       BadgeColor="Color.Tertiary" BadgeContent="3" Href="/KeyForge//cart">
+                       BadgeColor="Color.Tertiary" BadgeContent="3" Href="/KeyForge/cart">
     @if (CartService.GetTotalItems() > 0)
     {
         <MudBadge Content="@CartService.GetTotalItems().ToString()" Color="Color.Error" Overlap="true" Dot="false" />
