@@ -3,7 +3,13 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-app.use(cors()); 
+app.use(cors({
+    origin: [
+        'https://key-forge-kappa.vercel.app/',
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ]
+})); 
 
 const productos = [
     {
@@ -68,10 +74,11 @@ const productos = [
     }
 ];
 
-app.get('/api/productos', (req, res) => {
-    res.json(productos);
-});
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
