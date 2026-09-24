@@ -1,4 +1,3 @@
-// Models/CartItem.cs
 using KeyForge.Frontend.Model;
 
 namespace KeyForge.Frontend.Model;

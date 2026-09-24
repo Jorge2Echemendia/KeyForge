@@ -91,15 +91,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Detectar si es móvil
-        _isMobile = false; // Esto se puede mejorar con JavaScript interop
+        
+        _isMobile = false; 
     }
 
     private void ToggleTheme() => _isDarkMode = !_isDarkMode;
     private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
-        Console.WriteLine($"[DEBUG] Drawer expandido: {_drawerOpen}"); // Verifica en la consola del navegador (F12)
-        StateHasChanged(); // Fuerza a Blazor a repintar el componente inmediatamente
+        Console.WriteLine($"[DEBUG] Drawer expandido: {_drawerOpen}");
+        StateHasChanged();
     }
 }
