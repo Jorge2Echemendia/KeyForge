@@ -1,9 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "echo 'Build handled by GitHub Actions'",
-  "outputDirectory": "bin/Release/net10.0/publish/wwwroot",
+  "outputDirectory": "publish/wwwroot",
   "framework": null,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/((?!_framework).*)",
+      "destination": "/index.html"
+    }
   ]
 }
