@@ -5,7 +5,7 @@ const PORT = 3000;
 
 app.use(cors({
     origin: [
-        'https://jorge2echemendia.github.io',
+        'https://jorge2echemendia.github.io/KeyForge/',
         'http://localhost:3000'
     ]
 }));
