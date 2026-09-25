@@ -5,26 +5,26 @@
     <MudDivider Class="my-2" />
     <!-- Menú de Navegación -->
 
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+    <MudNavLink Href="/KeyForge/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
         @if (IsExpanded)
         {
             <span>Inicio</span>
         }
     </MudNavLink>
-    <MudNavLink Href="/shop" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">
+    <MudNavLink Href="/KeyForge/shop" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">
         @if (IsExpanded)
         {
             <span>Tienda</span>
         }
         <MudBadge Content="6" Color="Color.Primary" Overlap="true" Class="ml-1" />
     </MudNavLink>
-    <MudNavLink Href="/reviews" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Reviews">
+    <MudNavLink Href="/KeyForge/reviews" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Reviews">
         @if (IsExpanded)
         {
             <span>Reseñas</span>
         }
     </MudNavLink>
-    <MudNavLink Href="/contact" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Contacts">
+    <MudNavLink Href="/KeyForge/contact" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Contacts">
         @if (IsExpanded)
         {
             <span>Contacto</span>
@@ -36,13 +36,13 @@
             <span>CUENTA </span>
         }
     </MudText>
-    <MudNavLink Href="/login" Match="NavLinkMatch.All" Icon="@Icons.Material.Rounded.Login">
+    <MudNavLink Href="/KeyForge/login" Match="NavLinkMatch.All" Icon="@Icons.Material.Rounded.Login">
         @if (IsExpanded)
         {
             <span>Iniciar Sesión</span>
         }
     </MudNavLink>
-    <MudNavLink Href="/register" Match="NavLinkMatch.All" Icon="@Icons.Material.Rounded.PersonAdd">
+    <MudNavLink Href="/KeyForge/register" Match="NavLinkMatch.All" Icon="@Icons.Material.Rounded.PersonAdd">
         @if (IsExpanded)
         {
             <span>Registrarse</span>
@@ -57,7 +57,7 @@
             <MudPaper Elevation="0" Class="pa-3 rounded-lg" Style="background: var(--mud-palette-background);">
                 <MudText Typo="Typo.caption" Class="mb-2">¿Necesitas ayuda?</MudText>
                 <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" FullWidth="true"
-                           Href="/contact">
+                           Href="/KeyForge/contact">
                     Contactar Soporte
                 </MudButton>
             </MudPaper>
