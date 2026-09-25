@@ -5,11 +5,10 @@ const PORT = 3000;
 
 app.use(cors({
     origin: [
-        'https://key-forge-kappa.vercel.app/',
-        'http://localhost:5173',
+        'https://jorge2echemendia.github.io/KeyForge/',
         'http://localhost:3000'
     ]
-})); 
+}));
 
 const productos = [
     {
